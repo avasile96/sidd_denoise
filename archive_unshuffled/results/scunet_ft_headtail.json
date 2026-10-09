@@ -1,0 +1,51 @@
+{
+  "name": "scunet_ft_headtail",
+  "n_blocks": 1280,
+  "psnr": 37.835323138455976,
+  "psnr_std": 4.768699108552297,
+  "psnr_ci95_images": [
+    36.43468926641808,
+    39.21231852393467
+  ],
+  "ssim": 0.9454466138963438,
+  "ssim_std": 0.05602161557904964,
+  "ssim_ci95_images": [
+    0.9303522983488987,
+    0.9589880484693273
+  ],
+  "ssim2d": 0.9049178305459549,
+  "ssim2d_std": 0.08500431075211663,
+  "ssim2d_ci95_images": [
+    0.8793285258298045,
+    0.9283172361747203
+  ],
+  "lpips": 0.20672254264354706,
+  "lpips_std": 0.14390303194522858,
+  "lpips_ci95_images": [
+    0.16935822518076746,
+    0.24627953256946056
+  ],
+  "dists": 0.21059246361255646,
+  "dists_std": 0.06042072921991348,
+  "dists_ci95_images": [
+    0.1965616997051984,
+    0.22510789407417175
+  ],
+  "params": 17946072,
+  "gmacs_256": 74.851549184,
+  "tta": false,
+  "ms_per_block": 78.53667475283146,
+  "device": "mps",
+  "ckpt": "runs/scunet_ft_headtail/best.pt",
+  "train_cfg": "scunet_ft_headtail",
+  "train": {
+    "name": "scunet_ft_headtail",
+    "device": "mps",
+    "iters": 3000,
+    "best_val_psnr": 38.89607374429075,
+    "train_hours": 0.3719987500376172,
+    "params": 17946072,
+    "trainable_params": 3456,
+    "train_pairs": 144
+  }
+}

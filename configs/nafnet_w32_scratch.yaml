@@ -1,0 +1,6 @@
+# Main from-scratch model: NAFNet-width32 (official SIDD architecture), PSNR loss.
+base: base.yaml
+name: nafnet_w32_scratch
+model:
+  name: nafnet
+  kwargs: {width: 32, middle_blk_num: 12, enc_blk_nums: [2, 2, 4, 8], dec_blk_nums: [2, 2, 2, 2]}

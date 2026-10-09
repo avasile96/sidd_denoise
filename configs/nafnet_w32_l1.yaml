@@ -1,0 +1,4 @@
+# Ablation: L1 loss instead of PSNR loss.
+base: nafnet_w32_scratch.yaml
+name: nafnet_w32_l1
+loss: l1

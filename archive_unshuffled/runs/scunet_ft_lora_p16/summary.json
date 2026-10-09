@@ -1,0 +1,10 @@
+{
+  "name": "scunet_ft_lora_p16",
+  "device": "mps",
+  "iters": 3000,
+  "best_val_psnr": 39.70412201429817,
+  "train_hours": 0.7976701846387652,
+  "params": 18964168,
+  "trainable_params": 1018096,
+  "train_pairs": 16
+}

@@ -1,0 +1,18 @@
+# Weaker prior: DRUNet pretrained on AWGN only; learnable global noise level.
+base: base.yaml
+name: drunet_ft_full
+model:
+  name: drunet
+  weights: weights/drunet_color.pth
+  finetune: full
+  kwargs: {sigma: 25, learn_sigma: true}
+optim:
+  lr: 5.0e-5
+  betas: [0.9, 0.999]
+data:
+  patch_size: 128
+sched:
+  iters: 3000
+  warmup: 100
+val:
+  every: 500

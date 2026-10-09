@@ -1,0 +1,43 @@
+{
+  "seed": 0,
+  "device": null,
+  "out_dir": "runs",
+  "amp": true,
+  "ema": 0.999,
+  "loss": "psnr",
+  "log_every": 100,
+  "data": {
+    "root": "data/patches",
+    "patch_size": 128,
+    "val_patch_size": 512,
+    "batch_size": 8,
+    "num_workers": 6,
+    "augment": false,
+    "num_pairs": 16,
+    "pair_seed": 0
+  },
+  "optim": {
+    "lr": 5e-05,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "weight_decay": 0.0,
+    "grad_clip": 1.0
+  },
+  "sched": {
+    "iters": 3000,
+    "warmup": 100,
+    "eta_min": 1e-07
+  },
+  "val": {
+    "every": 500,
+    "max_tiles": 64
+  },
+  "name": "scunet_ft_full_p16",
+  "model": {
+    "name": "scunet",
+    "weights": "weights/scunet_color_real_psnr.pth",
+    "finetune": "full"
+  }
+}

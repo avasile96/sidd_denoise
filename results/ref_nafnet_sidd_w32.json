@@ -1,0 +1,40 @@
+{
+  "name": "ref_nafnet_sidd_w32",
+  "n_blocks": 1280,
+  "psnr": 39.880728179219545,
+  "psnr_std": 4.501401306977016,
+  "psnr_ci95_images": [
+    38.54799780942654,
+    41.20737971453944
+  ],
+  "ssim": 0.959400806355475,
+  "ssim_std": 0.0448849484047893,
+  "ssim_ci95_images": [
+    0.9470315066199059,
+    0.9703268438848516
+  ],
+  "ssim2d": 0.9208926308009421,
+  "ssim2d_std": 0.07578537468148568,
+  "ssim2d_ci95_images": [
+    0.898027410179764,
+    0.9417379509587224
+  ],
+  "lpips": 0.1948225498199463,
+  "lpips_std": 0.15060260891914368,
+  "lpips_ci95_images": [
+    0.15521189817227424,
+    0.23765064434497615
+  ],
+  "dists": 0.2150282859802246,
+  "dists_std": 0.07040824741125107,
+  "dists_ci95_images": [
+    0.19697559682186694,
+    0.23191689503379165
+  ],
+  "params": 29159715,
+  "gmacs_256": 16.04503552,
+  "tta": false,
+  "ms_per_block": 37.72891629487276,
+  "device": "mps",
+  "note": "Official checkpoint trained on SIDD-Medium (superset of our SIDD-Small train set): reference ceiling, not comparable."
+}

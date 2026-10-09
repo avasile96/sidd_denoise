@@ -1,0 +1,51 @@
+{
+  "name": "nafnet_w32_scratch_tta",
+  "n_blocks": 1280,
+  "psnr": 38.92593263943964,
+  "psnr_std": 4.411124704536326,
+  "psnr_ci95_images": [
+    37.62634107491172,
+    40.19639278147389
+  ],
+  "ssim": 0.9524534812773133,
+  "ssim_std": 0.05066197781561945,
+  "ssim_ci95_images": [
+    0.9379800928158308,
+    0.9649262297281848
+  ],
+  "ssim2d": 0.9109277447180439,
+  "ssim2d_std": 0.08334036117347408,
+  "ssim2d_ci95_images": [
+    0.8854393642704732,
+    0.9337544958735403
+  ],
+  "lpips": 0.2072162926197052,
+  "lpips_std": 0.14137113094329834,
+  "lpips_ci95_images": [
+    0.17081915705930442,
+    0.24544459925964474
+  ],
+  "dists": 0.22366461157798767,
+  "dists_std": 0.06494824588298798,
+  "dists_ci95_images": [
+    0.207664838694036,
+    0.23927017644047738
+  ],
+  "params": 29159715,
+  "gmacs_256": 16.04503552,
+  "tta": true,
+  "ms_per_block": 281.21761437505484,
+  "device": "mps",
+  "ckpt": "runs/nafnet_w32_scratch/best.pt",
+  "train_cfg": "nafnet_w32_scratch",
+  "train": {
+    "name": "nafnet_w32_scratch",
+    "device": "mps",
+    "iters": 12000,
+    "best_val_psnr": 39.50899870888665,
+    "train_hours": 4.356635595824983,
+    "params": 29159715,
+    "trainable_params": 29159715,
+    "train_pairs": 144
+  }
+}

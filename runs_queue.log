@@ -1,0 +1,48 @@
+[zero-shot] (11:19)
+  DRUNet sigma=20  holdout PSNR 35.040
+  DRUNet sigma=30  holdout PSNR 36.259
+  DRUNet sigma=40  holdout PSNR 36.624
+  DRUNet sigma=50  holdout PSNR 36.645
+  DRUNet sigma=65  holdout PSNR 36.044
+  DRUNet sigma=80  holdout PSNR 35.418
+  DRUNet sigma=100 holdout PSNR 34.703
+scunet_real_psnr_zeroshot: PSNR 35.107  SSIM 0.8949  LPIPS 0.2642
+scunet_real_gan_zeroshot: PSNR 34.829  SSIM 0.9048  LPIPS 0.2274
+drunet_zeroshot: PSNR 33.978  SSIM 0.8825  LPIPS 0.3249
+ref_nafnet_sidd_w32: PSNR 39.881  SSIM 0.9594  LPIPS 0.1948
+ref_nafnet_sidd_w64: PSNR 40.212  SSIM 0.9609  LPIPS 0.1877
+[train] scunet_ft_full  (11:36)
+[eval] scunet_ft_full  (12:22)
+scunet_ft_full: psnr=39.3564  ssim=0.9560  ssim2d=0.9151  lpips=0.2104  dists=0.2274  (78.8 ms/block)
+[train] nafnet_w32_scratch  (12:25)
+[eval] nafnet_w32_scratch  (16:47)
+nafnet_w32_scratch: psnr=38.8627  ssim=0.9522  ssim2d=0.9106  lpips=0.1949  dists=0.2148  (35.0 ms/block)
+[train] scunet_ft_lora  (16:48)
+[eval] scunet_ft_lora  (17:37)
+scunet_ft_lora: psnr=39.3396  ssim=0.9558  ssim2d=0.9151  lpips=0.2134  dists=0.2295  (146.7 ms/block)
+[train] scunet_ft_headtail  (17:41)
+[eval] scunet_ft_headtail  (18:04)
+scunet_ft_headtail: psnr=37.8353  ssim=0.9454  ssim2d=0.9049  lpips=0.2067  dists=0.2106  (78.5 ms/block)
+[train] unet_scratch  (18:06)
+[eval] unet_scratch  (18:49)
+unet_scratch: psnr=35.7786  ssim=0.9195  ssim2d=0.8692  lpips=0.2569  dists=0.2396  (5.2 ms/block)
+[train] sweep_nafnet_p16  (18:50)
+[eval] sweep_nafnet_p16  (19:13)
+sweep_nafnet_p16: psnr=37.4941  ssim=0.9422  ssim2d=0.8979  lpips=0.1983  dists=0.2169  (35.0 ms/block)
+[train] sweep_nafnet_p144  (19:15)
+[eval] sweep_nafnet_p144  (19:38)
+sweep_nafnet_p144: psnr=37.7309  ssim=0.9424  ssim2d=0.8965  lpips=0.1914  dists=0.2161  (35.0 ms/block)
+[train] scunet_ft_full_p16  (19:40)
+[eval] scunet_ft_full_p16  (20:22)
+scunet_ft_full_p16: psnr=38.9244  ssim=0.9536  ssim2d=0.9141  lpips=0.2041  dists=0.2193  (78.6 ms/block)
+[train] scunet_ft_lora_p16  (20:25)
+[eval] scunet_ft_lora_p16  (21:13)
+scunet_ft_lora_p16: psnr=38.9925  ssim=0.9539  ssim2d=0.9140  lpips=0.2085  dists=0.2231  (147.3 ms/block)
+[eval] nafnet_w32_scratch_tta  (21:17)
+nafnet_w32_scratch_tta: psnr=38.9259  ssim=0.9525  ssim2d=0.9109  lpips=0.2072  dists=0.2237  (281.2 ms/block)
+[eval] scunet_ft_full_tta  (21:24)
+scunet_ft_full_tta: psnr=39.3889  ssim=0.9560  ssim2d=0.9151  lpips=0.2132  dists=0.2297  (626.2 ms/block)
+[train] drunet_ft_full  (21:39)
+[eval] drunet_ft_full  (21:59)
+drunet_ft_full: psnr=39.0709  ssim=0.9534  ssim2d=0.9121  lpips=0.2147  dists=0.2280  (38.3 ms/block)
+[done] 22:01

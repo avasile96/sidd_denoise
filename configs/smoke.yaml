@@ -1,0 +1,17 @@
+# Tiny end-to-end check (a few minutes on CPU/MPS).
+base: base.yaml
+name: smoke
+model:
+  name: nafnet
+  kwargs: {width: 16, middle_blk_num: 1, enc_blk_nums: [1, 1, 1, 1], dec_blk_nums: [1, 1, 1, 1]}
+data:
+  patch_size: 128
+  batch_size: 4
+  num_workers: 2
+sched:
+  iters: 200
+  warmup: 20
+val:
+  every: 100
+  max_tiles: 8
+log_every: 20

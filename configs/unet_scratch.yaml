@@ -1,0 +1,9 @@
+# Ablation: plain residual U-Net at similar compute to NAFNet-w32, same recipe.
+base: base.yaml
+name: unet_scratch
+model:
+  name: unet
+  kwargs: {base: 32, depth: 4}
+optim:
+  lr: 5.0e-4            # no LayerNorm -> 1e-3 is unstable for a plain U-Net
+  betas: [0.9, 0.999]

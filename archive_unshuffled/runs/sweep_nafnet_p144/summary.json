@@ -1,0 +1,10 @@
+{
+  "name": "sweep_nafnet_p144",
+  "device": "mps",
+  "iters": 3000,
+  "best_val_psnr": 38.593184569703084,
+  "train_hours": 0.3754461608330409,
+  "params": 29159715,
+  "trainable_params": 29159715,
+  "train_pairs": 144
+}

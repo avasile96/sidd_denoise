@@ -1,0 +1,18 @@
+# Transfer learning: SCUNet pretrained on synthetic realistic noise only, full fine-tune on SIDD-Small.
+base: base.yaml
+name: scunet_ft_full
+model:
+  name: scunet
+  weights: weights/scunet_color_real_psnr.pth
+  finetune: full
+optim:
+  lr: 5.0e-5
+  betas: [0.9, 0.999]
+data:
+  patch_size: 128
+sched:
+  iters: 3000
+  warmup: 100
+  eta_min: 1.0e-7
+val:
+  every: 500

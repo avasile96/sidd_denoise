@@ -1,0 +1,10 @@
+{
+  "name": "unet_scratch",
+  "device": "mps",
+  "iters": 12000,
+  "best_val_psnr": 37.47687922268017,
+  "train_hours": 0.7013879500495063,
+  "params": 10024931,
+  "trainable_params": 10024931,
+  "train_pairs": 144
+}

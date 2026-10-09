@@ -1,0 +1,7 @@
+# Cheapest transfer: only the input head conv and output tail conv are trained.
+base: scunet_ft_full.yaml
+name: scunet_ft_headtail
+model:
+  finetune: head_tail
+optim:
+  lr: 5.0e-4

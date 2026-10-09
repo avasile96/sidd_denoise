@@ -1,0 +1,51 @@
+{
+  "name": "scunet_ft_lora_p16",
+  "n_blocks": 1280,
+  "psnr": 38.992467286502404,
+  "psnr_std": 4.113535165846453,
+  "psnr_ci95_images": [
+    37.772554184209966,
+    40.1749420091964
+  ],
+  "ssim": 0.9539233155279454,
+  "ssim_std": 0.04791088293700815,
+  "ssim_ci95_images": [
+    0.9404672827469733,
+    0.9656060326232109
+  ],
+  "ssim2d": 0.9140391680996436,
+  "ssim2d_std": 0.0790322994403595,
+  "ssim2d_ci95_images": [
+    0.8903180307343239,
+    0.9356902905070519
+  ],
+  "lpips": 0.20850101113319397,
+  "lpips_std": 0.15556490421295166,
+  "lpips_ci95_images": [
+    0.16782345774583518,
+    0.2518461751798168
+  ],
+  "dists": 0.2230950891971588,
+  "dists_std": 0.06913506984710693,
+  "dists_ci95_images": [
+    0.20580841910094022,
+    0.2394934825319797
+  ],
+  "params": 18964168,
+  "gmacs_256": 85.994766336,
+  "tta": false,
+  "ms_per_block": 147.32474982738495,
+  "device": "mps",
+  "ckpt": "runs/scunet_ft_lora_p16/best.pt",
+  "train_cfg": "scunet_ft_lora_p16",
+  "train": {
+    "name": "scunet_ft_lora_p16",
+    "device": "mps",
+    "iters": 3000,
+    "best_val_psnr": 39.70412201429817,
+    "train_hours": 0.7976701846387652,
+    "params": 18964168,
+    "trainable_params": 1018096,
+    "train_pairs": 16
+  }
+}

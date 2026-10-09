@@ -1,0 +1,29 @@
+# Shared defaults. Individual configs set `base: base.yaml` and override what differs.
+seed: 0
+device: null            # auto: cuda > mps > cpu
+out_dir: runs
+amp: true               # fp16 autocast + GradScaler, CUDA only (MPS/CPU stay fp32)
+ema: 0.999              # evaluate EMA weights
+loss: psnr              # NAFNet's PSNR loss
+log_every: 100
+data:
+  root: data/patches
+  patch_size: 256
+  val_patch_size: 512   # holdout tiles are scored whole
+  batch_size: 8
+  num_workers: 6
+  augment: false        # NAFNet's SIDD recipe uses no flips/rotations
+  num_pairs: null       # null = all 144 training pairs
+  pair_seed: 0
+optim:
+  lr: 1.0e-3
+  betas: [0.9, 0.9]
+  weight_decay: 0.0
+  grad_clip: 1.0
+sched:
+  iters: 12000
+  warmup: 500
+  eta_min: 1.0e-7
+val:
+  every: 1000
+  max_tiles: 64

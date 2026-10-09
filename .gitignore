@@ -1,0 +1,15 @@
+# Environments and caches
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+.DS_Store
+
+# Large artifacts (download / regenerate with scripts/)
+data/
+weights/
+*.pt
+*.pth
+sidd_denoise.zip
+runs/logs/

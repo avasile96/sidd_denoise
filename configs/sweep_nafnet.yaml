@@ -1,0 +1,12 @@
+# Data-efficiency sweep, from-scratch arm: NAFNet-w32 at the fine-tuning budget
+# (128^2 patches, 3k iterations) so every point of the sweep costs the same compute.
+# Pair count is set on the command line: --set data.num_pairs=16
+base: nafnet_w32_scratch.yaml
+name: sweep_nafnet
+data:
+  patch_size: 128
+sched:
+  iters: 3000
+  warmup: 100
+val:
+  every: 500

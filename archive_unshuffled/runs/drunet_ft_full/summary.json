@@ -1,0 +1,10 @@
+{
+  "name": "drunet_ft_full",
+  "device": "mps",
+  "iters": 3000,
+  "best_val_psnr": 39.738063105902945,
+  "train_hours": 0.32817702915933394,
+  "params": 32640961,
+  "trainable_params": 32640961,
+  "train_pairs": 144
+}

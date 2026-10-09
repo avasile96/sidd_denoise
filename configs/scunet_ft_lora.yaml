@@ -1,0 +1,8 @@
+# Parameter-efficient transfer: LoRA (r=8) on every Linear and non-grouped Conv2d; base frozen.
+base: scunet_ft_full.yaml
+name: scunet_ft_lora
+model:
+  finetune: lora
+  lora_r: 8
+optim:
+  lr: 5.0e-4            # adapters start at zero -> a larger LR is standard for LoRA

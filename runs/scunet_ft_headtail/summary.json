@@ -1,0 +1,10 @@
+{
+  "name": "scunet_ft_headtail",
+  "device": "mps",
+  "iters": 3000,
+  "best_val_psnr": 39.16793602451583,
+  "train_hours": 0.3831867011388143,
+  "params": 17946072,
+  "trainable_params": 3456,
+  "train_pairs": 144
+}

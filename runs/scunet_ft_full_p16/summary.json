@@ -1,0 +1,10 @@
+{
+  "name": "scunet_ft_full_p16",
+  "device": "mps",
+  "iters": 3000,
+  "best_val_psnr": 39.79526969197001,
+  "train_hours": 3.9430029158459767,
+  "params": 17946072,
+  "trainable_params": 17946072,
+  "train_pairs": 16
+}
