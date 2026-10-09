@@ -21,19 +21,29 @@ On the 1280 official SIDD validation blocks, which were used only for scoring:
 | CBM3D (σ tuned on holdout) | 34.07 | 0.896 | 0.332 | – | – |
 | DRUNet zero-shot (AWGN prior, σ tuned) | 33.98 | 0.883 | 0.325 | – | – |
 | SCUNet-real zero-shot (synthetic realistic noise, never saw SIDD) | 35.11 | 0.895 | 0.264 | – | – |
-| Plain U-Net, from scratch | 35.78 | 0.920 | 0.257 | 10.0M | 0.7 h |
-| **NAFNet-w32, from scratch** | **38.86** | **0.952** | **0.195** | 29.2M | 4.4 h |
-| SCUNet fine-tuned, head + tail convs only | 37.84 | 0.945 | 0.207 | 3.5K | 0.4 h |
-| DRUNet fine-tuned (full) | 39.07 | 0.953 | 0.215 | 32.6M | 0.3 h |
-| **SCUNet fine-tuned, LoRA r=8** | **39.34** | **0.956** | 0.213 | 1.02M (5.7%) | 0.8 h |
-| **SCUNet fine-tuned (full)** | **39.36** | **0.956** | 0.210 | 17.9M | 0.75 h |
-| SCUNet fine-tuned (full) + x8 self-ensemble | 39.39 | 0.956 | 0.213 | 17.9M | 0.75 h |
+| Plain U-Net, from scratch | 38.22 | 0.947 | 0.224 | 10.0M | 1.3 h |
+| NAFNet-w32, from scratch, short schedule (3k it, 128² crops) | 38.51 | 0.949 | **0.186** | 29.2M | 4.6 h § |
+| NAFNet-w32, from scratch (12k it, 256² crops) ‡ | 38.86 | 0.952 | 0.195 | 29.2M | 4.4 h |
+| SCUNet fine-tuned, head + tail convs only | 37.96 | 0.945 | 0.207 | 3.5K | 0.4 h |
+| DRUNet fine-tuned (full) ‡ | 39.07 | 0.953 | 0.215 | 32.6M | 0.3 h |
+| **SCUNet fine-tuned, LoRA r=8** | **39.42** | **0.956** | 0.210 | 1.02M (5.7%) | 0.8 h |
+| **SCUNet fine-tuned (full)** | **39.45** | **0.957** | 0.209 | 17.9M | 1.0 h |
 | *NAFNet-w32 official checkpoint †* | *39.88* | *0.959* | *0.195* | | |
 | *NAFNet-w64 official checkpoint †* | *40.21* | *0.961* | *0.188* | | |
 
 † Trained by the NAFNet authors on SIDD-Medium (a superset of our training data) for 200–400k iterations on 8 GPUs. It is a ceiling, not a competitor. SSIM is the SIDD-convention 3-D SSIM. The per-channel SSIM, DISTS, 95% CIs, GMACs and latency for every row are in `notebooks/report.ipynb` and `results/*.json`.
 
-**Against the success criteria:** every learned model beats the Gaussian filter and tuned CBM3D on every metric. The best model gains **+6.3 dB PSNR / +0.075 SSIM over the Gaussian filter** and **+5.3 dB / +0.06 over tuned BM3D**. It is better on 40/40 test images against BM3D (paired bootstrap, p < 1e-4), and it lands within 0.5 dB of the official NAFNet-w32 checkpoint while training for 45 minutes on a laptop.
+‡ Trained before the data-loader fix (see below) and not re-run; read these rows as lower bounds. The DRUNet result is in `archive_unshuffled/results/`.
+
+§ Measured wall-clock. This run was slower per iteration than the main NAFNet run; I did not investigate why.
+
+### Data-loader fix and re-run (Oct 8–9)
+
+The first round of experiments trained with `shuffle=False`. `index.json` stores each photo's tiles together, so every batch came from a single image. I fixed the loader, added a regression test, moved the affected runs to `archive_unshuffled/`, and re-ran the queue. The fix mattered most for training from scratch: the U-Net gained +2.4 dB and the short NAFNet runs +0.7–0.8 dB, while the SCUNet fine-tunes moved only about +0.1 dB.
+
+The re-run did not finish. Not yet redone with the fixed loader: the 4.4 h NAFNet-w32 main run (‡), the DRUNet fine-tune (‡), the x8 self-ensemble evaluations, and the two 16-pair SCUNet fine-tunes (one was retrained, but its evaluation was interrupted).
+
+**Against the success criteria:** every learned model beats the Gaussian filter and tuned CBM3D on every metric. The best model gains **+6.3 dB PSNR / +0.076 SSIM over the Gaussian filter** and **+5.4 dB / +0.061 over tuned BM3D**. It is better on 40/40 test images against BM3D (paired bootstrap, p < 1e-4), and it lands within 0.43 dB of the official NAFNet-w32 checkpoint after about an hour of training on a laptop.
 
 ![Headline comparison](results/figures/bars.png)
 ![Visual comparison](results/figures/visual_grid.png)
@@ -43,26 +53,25 @@ On the 1280 official SIDD validation blocks, which were used only for scoring:
 ### Findings
 
 1. **Transfer learning beats training from scratch at a fraction of the compute.**
-   - Fine-tuned SCUNet reaches 39.36 dB in 0.75 h. NAFNet from scratch reaches 38.86 dB in 4.4 h.
-   - The paired difference is **+0.49 dB (95% CI 0.42–0.57)**, with SCUNet better on 39 of 40 test images.
+   - At equal compute (3k iterations, 128² crops, all 144 pairs, both with the fixed loader), fine-tuned SCUNet beats NAFNet from scratch by **+0.95 dB (95% CI 0.85–1.04)**, on 40 of 40 test images.
+   - Against the longer 4.4 h NAFNet run (‡, pre-fix) the gap is +0.59 dB (CI 0.51–0.68), also 40 of 40. That NAFNet would likely gain from the fix, so treat this gap as an upper bound.
    - The prior does most of the work: zero-shot SCUNet already scores 35.1 dB, and 3k fine-tuning steps add +4.3 dB.
-2. **Data efficiency.** At equal compute (3k iterations, 128² patches), the fine-tuned models trained on **16 pairs** (38.92–38.99 dB) beat NAFNet trained from scratch on all 144 pairs (37.73 dB) by +1.2 dB.
-   - They are statistically tied with the 4.4 h full-budget NAFNet: +0.06 dB, CI −0.14 to +0.24.
-   - Going from 16 to 144 pairs adds +0.43 dB to fine-tuning, but only +0.24 dB to training from scratch. At this budget, training from scratch is limited by compute, not by data.
+2. **Data efficiency (partly re-run).** NAFNet from scratch at 3k iterations scores 38.15 dB on 16 pairs and 38.51 dB on all 144 (+0.36 dB, CI 0.19–0.56).
+   - The matching 16-pair SCUNet fine-tunes have not been re-run with the fixed loader. Before the fix they scored 38.92 (full) and 38.99 dB (LoRA), already above NAFNet on all 144 pairs. Since the fix moved the SCUNet fine-tunes by only ~0.1 dB, I expect the conclusion to hold, but it is not yet measured.
 
    ![Data efficiency](results/figures/data_efficiency.png)
-3. **LoRA matches full fine-tuning.**
-   - With 5.7% of the parameters trainable, LoRA reaches 39.34 vs 39.36 dB (difference −0.02 dB, CI −0.04 to +0.00).
-   - At 16 pairs LoRA is marginally *ahead* (38.99 vs 38.92), consistent with its lower capacity to overfit.
-   - Training only the first and last conv layers (3.5K parameters) already recovers +2.7 dB over zero-shot. So much of the synthetic-to-real gap is a colour and scale mismatch at the input/output, which a tiny adapter can fix.
+3. **LoRA nearly matches full fine-tuning.**
+   - With 5.7% of the parameters trainable, LoRA reaches 39.42 vs 39.45 dB. The gap is small but consistent: −0.04 dB (CI −0.05 to −0.02), with full fine-tuning ahead on 35 of 40 images.
+   - Training only the first and last conv layers (3.5K parameters) already recovers +2.9 dB over zero-shot (CI 2.3–3.5). So much of the synthetic-to-real gap is a colour and scale mismatch at the input/output, which a tiny adapter can fix.
    - The adapters merge into the base weights (`merge_lora`), so LoRA inference costs nothing extra. The GMACs figure for the LoRA row in `results/` is measured unmerged.
-4. **Architecture matters more than the prior after fine-tuning.**
-   - DRUNet's AWGN prior is 1.1 dB worse zero-shot, but only 0.29 dB worse after fine-tuning (39.07 vs 39.36).
-   - NAFNet's blocks (LayerNorm, SimpleGate, channel attention) are worth **+3.1 dB** over a plain U-Net of similar compute (38.86 vs 35.78; better on 40 of 40 images).
+4. **NAFNet's blocks help, but far less than first measured.**
+   - With the fixed loader, NAFNet trained for 3k iterations on 128² crops beats the plain U-Net trained for 12k iterations on 256² crops: +0.29 dB (CI 0.22–0.35), better on 35 of 40 images, on a quarter of the iterations.
+   - The earlier "+3.1 dB" came mostly from the loader bug hurting the U-Net.
+   - DRUNet's AWGN prior is 1.1 dB worse than SCUNet zero-shot. After fine-tuning it trails by 0.38 dB, but that DRUNet run predates the fix (‡).
 5. **PSNR and perception disagree.**
-   - NAFNet from scratch has *lower* PSNR than fine-tuned SCUNet but *better* LPIPS and DISTS (0.195 vs 0.210). It matches the official checkpoint on LPIPS.
+   - NAFNet from scratch has *lower* PSNR than fine-tuned SCUNet but *better* LPIPS and DISTS: 0.186 (short schedule) and 0.195 (‡) vs 0.209. It matches or beats the official checkpoint on LPIPS.
    - SCUNet-real-GAN trades 0.28 dB PSNR for clearly better LPIPS (0.227 vs 0.264) at zero-shot.
-   - x8 self-ensemble adds a small but significant +0.03 to +0.06 dB PSNR at 8× the inference cost, and slightly *worsens* LPIPS, because averaging smooths texture.
+   - x8 self-ensemble on NAFNet (‡) adds +0.06 dB PSNR (CI 0.04–0.09) at 8× the inference cost, and *worsens* LPIPS (0.195 → 0.207), because averaging smooths texture.
 
    ![Perception–distortion](results/figures/perception_distortion.png)
 
@@ -119,8 +128,8 @@ scripts/         download_sidd.py, download_weights.py, prepare_patches.py, run_
                  zero_shot.py, train.py, evaluate.py, run_all.sh (the whole queue)
 configs/         YAML per experiment (inherit from base.yaml; override anything with --set a.b=value)
 notebooks/       report.ipynb (renders every result; no inference), colab_train.ipynb
-tests/           22 tests: model shapes, SDPA == upstream attention, LoRA zero-init and merge,
-                 metrics vs references, data pipeline, a training smoke test with resume
+tests/           23 tests: model shapes, SDPA == upstream attention, LoRA zero-init and merge,
+                 metrics vs references, data pipeline (incl. batches mix pairs), training smoke test with resume
 ```
 
 ## Reproduce
@@ -130,7 +139,7 @@ uv venv -p 3.13 && uv pip install -e ".[dev,extra]"      # or: pip install -e ".
 python scripts/download_sidd.py         # ~7 GB, parallel range requests (York server is slow)
 python scripts/download_weights.py      # SCUNet / DRUNet (KAIR release), NAFNet reference ckpts
 python scripts/prepare_patches.py       # 512² tiles + train/holdout index (~10 GB)
-pytest                                   # 22 tests
+pytest                                   # 23 tests
 bash scripts/run_all.sh                  # baselines, zero-shot, all training runs, evaluation
 jupyter nbconvert --execute --to notebook --inplace notebooks/report.ipynb
 bash make_zip.sh                         # deliverable zip (no data, weights or checkpoints)
@@ -152,7 +161,7 @@ Single run: `python scripts/train.py --config configs/scunet_ft_lora.yaml --set 
 
 ## Compute and engineering notes
 
-* **Budget.** Everything ran on one M4 Pro (MPS). The full queue (`scripts/run_all.sh`) took ~11 h wall-clock unattended. Measured step times at batch 8: NAFNet-w32 1.3 s at 256², SCUNet 0.83 s at 128², U-Net 0.27 s at 256². MPS gave no speedup from fp16/bf16 autocast or channels-last, so training stays in fp32. The recipe was therefore trimmed from the plan: NAFNet gets 12k iterations instead of the paper's 200k, and fine-tunes use 128² crops. At this length NAFNet is still improving (see the training curves), so 38.86 dB understates it. `notebooks/colab_train.ipynb` runs the same queue on a CUDA GPU, where longer schedules are affordable.
+* **Budget.** Everything ran on one M4 Pro (MPS). The full queue (`scripts/run_all.sh`) took ~11 h wall-clock unattended. Measured step times at batch 8: NAFNet-w32 1.3 s at 256², SCUNet 0.83 s at 128², U-Net 0.27 s at 256². MPS gave no speedup from fp16/bf16 autocast or channels-last, so training stays in fp32. The recipe was therefore trimmed from the plan: NAFNet gets 12k iterations instead of the paper's 200k, and fine-tunes use 128² crops. At this length NAFNet is still improving (see the training curves), and that run also predates the loader fix, so 38.86 dB understates it. `notebooks/colab_train.ipynb` runs the same queue on a CUDA GPU, where longer schedules are affordable.
 * **Ports verified against the originals.** NAFNet, SCUNet and DRUNet load the official checkpoints with `strict=True`, and the official NAFNet-SIDD checkpoint reproduces the paper.
   * SCUNet's windowed attention was rewritten with fused `scaled_dot_product_attention`, folded to 4-D because the MPS kernel rejects 5-D inputs. A unit test checks it against the upstream einsum/softmax code.
   * The released SCUNet real-noise checkpoints use `config=[4]*7`, not the repo's default `[2]*7`.
@@ -168,10 +177,12 @@ Single run: `python scripts/train.py --config configs/scunet_ft_lora.yaml --set 
   * The U-Net was given a lower learning rate than NAFNet (5e-4 vs 1e-3). I chose it up front because the U-Net has no LayerNorm, and did not test whether 1e-3 would be stable, so the two recipes differ in LR and β.
   * The DRUNet fine-tune initialised its learnable noise level at σ = 25, not at the holdout-tuned zero-shot value of 50, and σ barely moved (24.8). The effect is probably small after 3k steps of full fine-tuning, but it was not ablated.
   * A PSNR-loss vs L1 ablation (`configs/nafnet_w32_l1.yaml`) is prepared but did not fit the budget.
+* **Incomplete re-run.** Rows marked ‡ were trained with the unshuffled loader. Comparisons that involve them are flagged where they appear.
 * **Single seed.** Each configuration was trained once. The CIs cover test-set sampling, not training randomness. Gaps smaller than about 0.1 dB (LoRA vs full, TTA gains) should be read with that in mind.
 
 ## What I would do next
 
+1. **Finish the re-run with the fixed loader:** NAFNet-w32 at 12k iterations, the DRUNet fine-tune, the 16-pair SCUNet fine-tunes and the TTA evaluations (about 6–8 h on the M4 Pro).
 1. **Longer schedules on a GPU.** Run NAFNet-w32 at 40k+ iterations with batch 16, and fine-tune SCUNet at 256² crops. Both curves are still rising.
 2. **Distillation.** Use fine-tuned SCUNet (or CGNet) as a teacher for a ~2M-param NAFNet student, which recent mobile-denoising work shows loses only ~0.05 dB.
 3. **Better synthetic-to-real pretraining.** Give NAFNet the same synthetic realistic-noise pretraining SCUNet had. Then architecture and prior would no longer be confounded in finding 1.

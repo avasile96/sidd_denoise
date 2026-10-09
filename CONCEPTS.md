@@ -116,7 +116,7 @@ For restoration the dominant shape is the U-Net: an encoder that shrinks the ima
 |---|---|---|
 | CNN | Convolutional neural network: built mostly from convolutions. | U-Net, DRUNet, NAFNet are CNNs. |
 | Encoder–decoder | Compress to a compact representation, then expand back to the output. | The general shape of every model here. |
-| U-Net (2015; named for its U shape) | Encoder–decoder with skip connections at every scale. Originally for medical segmentation, now standard for restoration and diffusion. | Our plain ablation model: 35.78 dB. |
+| U-Net (2015; named for its U shape) | Encoder–decoder with skip connections at every scale. Originally for medical segmentation, now standard for restoration and diffusion. | Our plain ablation model: 38.22 dB. |
 | ResNet | Residual network: a network built from residual blocks; the idea that made very deep nets trainable. | DRUNet is a U-Net of ResNet blocks. |
 | DnCNN | Denoising CNN: an early (2017) residual CNN denoiser that predicts the noise. | Historical baseline. |
 | DRUNet (2021; read as deep residual U-Net) | A residual U-Net denoiser that takes a noise-level map as an extra input. | Pretrained on AWGN; 39.07 dB after fine-tuning. |
@@ -125,7 +125,7 @@ For restoration the dominant shape is the U-Net: an encoder that shrinks the ima
 | ViT (vision transformer) | Cuts an image into patches (e.g. 16×16) and treats them as tokens. | Too coarse for pixel-level restoration as-is. |
 | Swin Transformer | Hierarchical transformer with shifted window attention (Swin = shifted windows). | SCUNet's attention design. |
 | Restormer (restoration transformer) / SwinIR (Swin for image restoration) / Uformer (U-shaped transformer) | Transformer-based restoration networks from 2021–2022. | Surveyed; not trained. |
-| SCUNet (2023; Swin-Conv U-Net) | Swin-Conv U-Net: each block splits channels into a conv path and a window-attention path. Released with weights trained on a realistic synthetic-noise pipeline. | Our transfer source: 35.11 zero-shot, 39.36 dB fine-tuned. |
+| SCUNet (2023; Swin-Conv U-Net) | Swin-Conv U-Net: each block splits channels into a conv path and a window-attention path. Released with weights trained on a realistic synthetic-noise pipeline. | Our transfer source: 35.11 zero-shot, 39.45 dB fine-tuned. |
 | CGNet (CascadedGaze network) / KBNet (kernel basis network) | Recent CNNs at the top of the SIDD leaderboard (~40.4 dB). | Cited as the state of the art. |
 | Mamba / state-space models (SSM) | Sequence models with linear-time scanning, an attention alternative. MambaIR (Mamba for image restoration) applies them to images. | Ruled out: CUDA-only kernels, no SIDD gain. |
 | GAN (generative adversarial network) | A generator trained against a discriminator that tries to tell real images from outputs. Produces sharp, realistic texture but can hallucinate. | SCUNet-real-GAN checkpoint: better LPIPS, lower PSNR. |
@@ -173,17 +173,17 @@ Transfer learning reuses what a model learned on one task or data source to do b
 | Pretraining | Training on a large or easy-to-get dataset first. | SCUNet on synthetic realistic noise; DRUNet on AWGN. |
 | Pretrained weights / checkpoint | The saved parameters of a trained model. | Downloaded from the KAIR and NAFNet releases. |
 | Backbone | The main feature-extracting body of a network, reused across tasks. | SCUNet acts as the backbone being adapted. |
-| Fine-tuning | Continuing training of a pretrained model on the target data, usually with a small LR. | Full fine-tune: 39.36 dB in 0.75 h. |
+| Fine-tuning | Continuing training of a pretrained model on the target data, usually with a small LR. | Full fine-tune: 39.45 dB in 1.0 h. |
 | Zero-shot | Using a model on a task or domain it was never trained on, without any updates. | SCUNet-real zero-shot: 35.11 dB. |
 | Freezing layers | Keeping some weights fixed during fine-tuning. | Head+tail: everything but 3.5K weights frozen. |
 | Head / tail | The first (input) and last (output) layers of a network. | Training only these recovers +2.7 dB. |
 | PEFT (parameter-efficient fine-tuning) | Adapting a model by training a small number of extra or selected parameters. | LoRA and head+tail runs. |
-| LoRA (low-rank adaptation) | Adds a trainable low-rank update B·A next to each frozen weight. B starts at zero, so the model is initially unchanged. It can be merged back into the weights afterwards at no cost. | r = 8, 5.7% of params, within 0.02 dB of full. |
+| LoRA (low-rank adaptation) | Adds a trainable low-rank update B·A next to each frozen weight. B starts at zero, so the model is initially unchanged. It can be merged back into the weights afterwards at no cost. | r = 8, 5.7% of params, within 0.04 dB of full. |
 | Rank (r) and alpha | LoRA's rank is the size of the bottleneck; alpha scales the update. | r = 8, alpha = 8. |
 | Adapter | A small trainable module inserted into a frozen network; LoRA is one kind. | — |
 | Domain gap / domain shift | Systematic difference between training and deployment data. | Synthetic noise vs real SIDD noise. |
 | Domain adaptation | Methods for closing a domain gap. | Fine-tuning is the simplest form. |
-| Data efficiency | How much performance you get per labelled example. | 16 pairs fine-tuned ≈ 144 pairs from scratch. |
+| Data efficiency | How much performance you get per labelled example. | 16 pairs fine-tuned ≈ 144 pairs from scratch (pre-fix runs; re-run pending). |
 | Catastrophic forgetting | Fine-tuning erasing what the model knew before. | Not measured; low LR limits it. |
 | Knowledge distillation | Training a small "student" to mimic a large "teacher". | Proposed next step for deployment. |
 | Data leakage via pretraining | When pretraining data overlaps the test or training data, which inflates or confounds results. | Why official SIDD checkpoints are only a ceiling. |
@@ -194,7 +194,7 @@ Restoration quality is measured against a clean reference with fidelity metrics 
 
 | Term | What it means | In this project |
 |---|---|---|
-| PSNR (peak signal-to-noise ratio) | 10·log₁₀(255² / MSE), in dB. Higher is better; +1 dB is about 21% less squared error. | Primary metric: 23.66 noisy → 39.36 best. |
+| PSNR (peak signal-to-noise ratio) | 10·log₁₀(255² / MSE), in dB. Higher is better; +1 dB is about 21% less squared error. | Primary metric: 23.66 noisy → 39.45 best. |
 | SSIM (structural similarity index measure) | Compares local means, contrast and correlation; 0–1, higher is better. Closer to human judgment than PSNR. | 3-D SIDD convention; per-channel also reported. |
 | 2-D vs 3-D SSIM | Per-channel SSIM averaged over RGB vs one SSIM computed jointly over height, width and colour (what MATLAB and SIDD papers report). | 0.915 vs 0.956 for the same model. |
 | Full-reference vs no-reference | Full-reference metrics need the clean image; no-reference metrics (NIQE = natural image quality evaluator; MUSIQ = multi-scale image quality transformer; CLIP-IQA = CLIP-based image quality assessment) judge quality alone. | We use full-reference only. |
