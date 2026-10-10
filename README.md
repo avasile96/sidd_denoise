@@ -1,6 +1,6 @@
 # Real-noise image denoising on SIDD
 
-Take-home task: *train an image restoration model that beats simple baselines on PSNR/SSIM with visually convincing output, on an 8–12 GB GPU or CPU.*
+*Train an image restoration model that beats simple baselines on PSNR/SSIM with visually convincing output, on an 8–12 GB GPU or CPU.*
 
 I chose **denoising of real smartphone noise (SIDD sRGB)** and compared two families of models:
 
